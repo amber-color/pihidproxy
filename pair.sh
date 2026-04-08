@@ -7,19 +7,30 @@ echo "Finding BT device *$devicename* ..."
 sudo bluetoothctl --timeout 10 scan on > /dev/null 2>&1
 
 found=$(sudo bluetoothctl devices | grep "$devicename")
-if [ $? -eq 0 ]; then
-    mac=$(echo "$found" | awk '{print $2}')
-    echo "Found: $mac"
+if [ $? -ne 0 ]; then
+    echo "not found"
+    exit 1
+fi
+
+mac=$(echo "$found" | awk '{print $2}')
+echo "Found: $mac"
+
+if sudo bluetoothctl info "$mac" | grep -q "Paired: yes"; then
+    # Already paired — just trust and connect
+    echo "Already paired, connecting..."
+    sudo bluetoothctl trust "$mac"
+    sudo bluetoothctl connect "$mac"
+else
+    # First time pairing
+    echo "Pairing..."
     {
-        sleep 1                  # Wait for bluetoothctl DBus agent to initialize
+        sleep 1
         echo "agent NoInputNoOutput"
         echo "default-agent"
         echo "pair $mac"
-        sleep 8                  # Wait for pairing to complete before connecting
+        sleep 15
         echo "trust $mac"
         echo "connect $mac"
-        sleep 5                  # Wait for connection to establish
+        sleep 5
     } | sudo bluetoothctl
-else
-    echo "not found"
 fi
