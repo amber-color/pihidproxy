@@ -1,5 +1,5 @@
 #!/bin/bash
-devicename="NexDock"
+devicename="HHKB"
 
 echo "Finding BT device *$devicename* ..."
 
@@ -10,8 +10,14 @@ found=$(sudo bluetoothctl devices | grep "$devicename")
 if [ $? -eq 0 ]; then
     mac=$(echo "$found" | awk '{print $2}')
     echo "Found: $mac"
-    printf "default-agent\nagent on\npair %s\ntrust %s\nconnect %s\n" \
-        "$mac" "$mac" "$mac" | sudo bluetoothctl
+    {
+        echo "agent NoInputNoOutput"
+        echo "default-agent"
+        echo "pair $mac"
+        echo "trust $mac"
+        echo "connect $mac"
+        sleep 5
+    } | sudo bluetoothctl
 else
     echo "not found"
 fi
