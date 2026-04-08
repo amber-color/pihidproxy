@@ -4,10 +4,10 @@ After=bluetooth.target
 
 [Service]
 Type=simple
-WorkingDirectory=/home/lk/pihidproxy
-ExecStartPre=/bin/bash /home/lk/pihidproxy/setuphid.sh
-ExecStartPre=/bin/bash /home/lk/pihidproxy/pair.sh
-ExecStart=/usr/bin/python3 /home/lk/pihidproxy/keys.py
+WorkingDirectory=REPODIR
+ExecStartPre=/bin/bash REPODIR/setuphid.sh
+ExecStartPre=/bin/bash REPODIR/pair.sh
+ExecStart=/usr/bin/python3 REPODIR/keys.py
 Restart=on-failure
 RestartSec=5
 

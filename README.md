@@ -14,20 +14,47 @@ Bluetooth keyboard
 
 Initial setup:
 
-    echo "dtoverlay=dwc2" | sudo tee -a /boot/config.txt
+**1. Enable USB OTG (dwc2)**
+
+    # Raspberry Pi OS Bookworm:
+    echo "dtoverlay=dwc2" | sudo tee -a /boot/firmware/config.txt
+    # Older OS (Bullseye and earlier):
+    # echo "dtoverlay=dwc2" | sudo tee -a /boot/config.txt
+
     echo "dwc2" | sudo tee -a /etc/modules
     echo "libcomposite" | sudo tee -a /etc/modules
 
-put the following in /etc/rc.local
+**2. Install Python dependency**
 
-    pair.sh
-    setuphid.sh
-    keys.py
+    sudo apt install python3-evdev
 
-pair.sh - bash script to pair & connect bluetooth on boot.
+**3. Pair the Bluetooth keyboard (one-time)**
 
-setuphid.sh - installs the USB keybaord driver
+    sudo bash pair.sh
 
-keys.py - reads keyboard (e.g. bluetooth) and translates keycodes, then sends it over USB.
+A 6-digit passkey will be displayed — type it on the keyboard within 30 seconds.
+
+**4. Install and enable the systemd service**
+
+Run from the cloned repository directory:
+
+    sed "s|REPODIR|$(pwd)|" pihidproxy.service | sudo tee /etc/systemd/system/pihidproxy.service
+    sudo systemctl daemon-reload
+    sudo systemctl enable pihidproxy.service
+
+**5. Reboot**
+
+    sudo reboot
+
+After reboot, connecting the Pi's USB data port to a PC will start everything automatically.
+The PC will see a USB keyboard, and keypresses from the Bluetooth keyboard will be forwarded.
+
+---
+
+pair.sh - pairs & connects the Bluetooth keyboard on boot.
+
+setuphid.sh - sets up the USB HID gadget (keyboard + mouse).
+
+keys.py - reads keyboard events and forwards them over USB HID.
 
 
