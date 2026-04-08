@@ -1,0 +1,15 @@
+[Unit]
+Description=pihidproxy - Bluetooth to USB HID bridge
+After=bluetooth.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/lk/pihidproxy
+ExecStartPre=/bin/bash /home/lk/pihidproxy/setuphid.sh
+ExecStartPre=/bin/bash /home/lk/pihidproxy/pair.sh
+ExecStart=/usr/bin/python3 /home/lk/pihidproxy/keys.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

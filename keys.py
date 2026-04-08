@@ -1,17 +1,19 @@
 import evdev, time
 from evdev import InputDevice, categorize, ecodes
 
-dev =  None
+NULL_CHAR = chr(0)
+
+dev = None
 while dev is None:
         try:
            dev = InputDevice('/dev/input/event0')
         except:
-           print "No keyboard - waiting..."
-           time.sleep (10)
+           print("No keyboard - waiting...")
+           time.sleep(10)
 
 def write_report(report):
     with open('/dev/hidg0', 'rb+') as fd:
-        fd.write(report.encode())
+        fd.write(report.encode('latin-1'))
 
 scancodes = {
     # Scancode: ASCIICode
