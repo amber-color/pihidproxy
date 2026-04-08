@@ -11,12 +11,14 @@ if [ $? -eq 0 ]; then
     mac=$(echo "$found" | awk '{print $2}')
     echo "Found: $mac"
     {
+        sleep 1                  # Wait for bluetoothctl DBus agent to initialize
         echo "agent NoInputNoOutput"
         echo "default-agent"
         echo "pair $mac"
+        sleep 8                  # Wait for pairing to complete before connecting
         echo "trust $mac"
         echo "connect $mac"
-        sleep 5
+        sleep 5                  # Wait for connection to establish
     } | sudo bluetoothctl
 else
     echo "not found"
