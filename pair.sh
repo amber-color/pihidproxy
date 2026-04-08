@@ -16,21 +16,24 @@ mac=$(echo "$found" | awk '{print $2}')
 echo "Found: $mac"
 
 if sudo bluetoothctl info "$mac" | grep -q "Paired: yes"; then
-    # Already paired — just trust and connect
+    # Already paired — just reconnect
     echo "Already paired, connecting..."
-    sudo bluetoothctl trust "$mac"
     sudo bluetoothctl connect "$mac"
 else
-    # First time pairing
-    echo "Pairing..."
+    # First-time pairing: HHKB-Hybrid requires passkey entry.
+    # A 6-digit passkey will be displayed below — type it on the HHKB within 30 seconds.
+    echo "Pairing... Type the displayed passkey on the HHKB within 30 seconds."
     {
         sleep 1
-        echo "agent NoInputNoOutput"
+        echo "agent DisplayOnly"
         echo "default-agent"
         echo "pair $mac"
-        sleep 15
+        sleep 30
         echo "trust $mac"
-        echo "connect $mac"
-        sleep 5
+        echo "quit"
     } | sudo bluetoothctl
+
+    # Connect in a separate invocation to avoid InProgress conflict
+    sleep 2
+    sudo bluetoothctl connect "$mac"
 fi
