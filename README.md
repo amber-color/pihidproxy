@@ -45,6 +45,8 @@ SSH を有効にしておくと、後の作業が楽になります。
 Pi にログインして、以下を実行します。
 
 ```bash
+sudo apt update
+sudo apt install -y git
 git clone https://github.com/amber-color/pihidproxy.git
 cd pihidproxy
 ```
