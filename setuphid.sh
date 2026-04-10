@@ -1,4 +1,7 @@
 #!/bin/bash
+# Load libcomposite module (also mounts configfs at /sys/kernel/config)
+modprobe libcomposite
+
 cd /sys/kernel/config/usb_gadget/
 mkdir -p piproxy
 cd piproxy

@@ -3,13 +3,24 @@ from evdev import InputDevice, categorize, ecodes
 
 NULL_CHAR = chr(0)
 
+def find_keyboard():
+    for path in evdev.list_devices():
+        dev = InputDevice(path)
+        if 'HHKB' in dev.name or (
+            evdev.ecodes.EV_KEY in dev.capabilities() and
+            evdev.ecodes.KEY_A in dev.capabilities()[evdev.ecodes.EV_KEY]
+        ):
+            return dev
+    return None
+
 dev = None
 while dev is None:
-        try:
-           dev = InputDevice('/dev/input/event0')
-        except:
-           print("No keyboard - waiting...")
-           time.sleep(10)
+    dev = find_keyboard()
+    if dev is None:
+        print("No keyboard - waiting...")
+        time.sleep(10)
+
+print(f"Using keyboard: {dev.name} ({dev.path})")
 
 def write_report(report):
     with open('/dev/hidg0', 'rb+') as fd:
