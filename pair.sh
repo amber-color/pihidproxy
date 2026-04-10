@@ -3,6 +3,10 @@ devicename="HHKB"
 
 echo "Finding BT device *$devicename* ..."
 
+# Ensure Bluetooth is not soft-blocked
+rfkill unblock bluetooth
+sleep 1
+
 # Scan for 10 seconds using bluetoothctl (replaces deprecated hcitool scan)
 sudo bluetoothctl --timeout 10 scan on > /dev/null 2>&1
 
