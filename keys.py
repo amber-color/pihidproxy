@@ -117,6 +117,11 @@ for event in dev.read_loop():
             if data.scancode == 41: hidkey = 50 # #
             if data.scancode == 43: hidkey = 49 # \
 
+            # Japanese keys
+            if data.scancode == ecodes.KEY_HENKAN:   hidkey = 0x8A # 変換
+            if data.scancode == ecodes.KEY_MUHENKAN: hidkey = 0x8B # 無変換
+            if data.scancode == ecodes.KEY_KATAKANAHIRAGANA: hidkey = 0x88 # かな
+
             # print key_lookup, data.scancode, hidkey
 
             if caps:
