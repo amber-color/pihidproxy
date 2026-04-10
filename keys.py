@@ -55,6 +55,7 @@ for event in dev.read_loop():
                 caps = False
             continue # don't send
         if data.keystate == 1:  # Down events only
+            hidkey = 0  # reset for each keypress to prevent carryover
             key_lookup = u'{}'.format(scancodes.get(data.scancode))
 
             # print key_lookup, data.scancode
@@ -122,7 +123,8 @@ for event in dev.read_loop():
             if data.scancode == ecodes.KEY_MUHENKAN: hidkey = 0x8B # 無変換
             if data.scancode == ecodes.KEY_KATAKANAHIRAGANA: hidkey = 0x88 # かな
 
-            # print key_lookup, data.scancode, hidkey
+            if hidkey == 0:
+                print(f"unmapped scancode: {data.scancode} ({key_lookup})")
 
             if caps:
                 write_report(chr(32)+NULL_CHAR + chr (hidkey) + NULL_CHAR*5)
